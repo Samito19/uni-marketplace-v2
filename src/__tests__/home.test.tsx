@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Home from "@/app/page";
 
-test("loads and displays greeting", async () => {
+test("Home page loads correctly", async () => {
   // ARRANGE
   render(<Home />);
 

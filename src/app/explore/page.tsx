@@ -36,7 +36,6 @@ export default function ExplorePage() {
     } else if (status == HttpStatusCode.FORBIDDEN) {
       console.error("You are not logged in !");
     }
-    console.log(fetchedListings);
     setListings(fetchedListings ?? []);
   };
 
