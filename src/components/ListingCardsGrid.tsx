@@ -95,7 +95,7 @@ export const ListingCardsGrid = ({ listings }: Props) => {
                 alignItems={"center"}
               >
                 <Text color={Colors.primaryRed} fontSize="xl">
-                  $450
+                  ${listing.price}
                 </Text>
                 <Box display={"flex"} alignItems={"center"} gap={2}>
                   <ViewIcon w={5} h={5} />
