@@ -1,24 +1,26 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { ListingCardsGrid } from "@/components/ListingCardsGrid";
 import { mockListingsArray } from "@/mocks/listings";
+import { ChakraProvider } from "@chakra-ui/react";
+import { ListingCardsGrid } from "@/components/ListingCardsGrid";
 
-//TODO: Fix price testing bug
 test("ListingCardsGrid properly renders", async () => {
   // ARRANGE
-  render(<ListingCardsGrid listings={mockListingsArray} />);
+  render(
+    <ChakraProvider>
+      <ListingCardsGrid listings={mockListingsArray} />
+    </ChakraProvider>
+  );
 
   // ACT
   const listingTitle = screen.getByText(mockListingsArray[0].title);
   const listingDescription = screen.getByText(mockListingsArray[0].description);
-  //   const listingPrice = screen.getByText(mockListingsArray[0].price);
   const listingViews = screen.getByText(mockListingsArray[0].views);
-
-  fireEvent.mouseEnter(listingTitle);
+  const listingPrice = screen.getByText("$" + mockListingsArray[0].price);
 
   // ASSERT
   expect(listingTitle).toBeTruthy();
   expect(listingDescription).toBeTruthy();
   expect(listingViews).toBeTruthy();
-  //   expect(listingPrice).toBeTruthy();
+  expect(listingPrice).toBeTruthy();
 });

@@ -10,11 +10,12 @@ import { ListingDto } from "@/types/ListingDto";
 import { PriceRange } from "@/types/PriceRange";
 import { Box, Text } from "@chakra-ui/react";
 import { User } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import LoadingPage from "../loading";
 
 export default function ExplorePage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [listings, setListings] = useState<ListingDto[]>([]);
+  const [listings, setListings] = useState<ListingDto[] | null>(null);
   const [filteredListings, setFilteredListings] = useState<ListingDto[] | null>(
     null
   );
@@ -36,7 +37,7 @@ export default function ExplorePage() {
     } else if (status == HttpStatusCode.FORBIDDEN) {
       console.error("You are not logged in !");
     }
-    setListings(fetchedListings ?? []);
+    setListings(fetchedListings ?? null);
   };
 
   useEffect(() => {
@@ -46,7 +47,10 @@ export default function ExplorePage() {
   /*This piece of code will take care of filtering all the listings down to the ones that contain
    at least one of the keywords typed in the search bar */
   useEffect(() => {
-    if (searchKeywords.length == 0 && categoriesFilter.length == 0) {
+    if (
+      !listings ||
+      (searchKeywords.length == 0 && categoriesFilter.length == 0)
+    ) {
       setFilteredListings(null);
       return;
     }
@@ -89,7 +93,9 @@ export default function ExplorePage() {
             Explore
           </Text>
           <Categories />
-          <ListingCardsGrid listings={filteredListings ?? listings} />
+          <Suspense fallback={<LoadingPage />}>
+            <ListingCardsGrid listings={filteredListings ?? listings} />
+          </Suspense>
         </Box>
       </div>
     </main>
