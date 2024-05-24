@@ -60,8 +60,8 @@ export default function ExploreSideBar({
               <RangeSliderTrack bg="red.100">
                 <RangeSliderFilledTrack bg={Colors.primaryRed} />
               </RangeSliderTrack>
-              <RangeSliderThumb boxSize={4} index={0} />
-              <RangeSliderThumb boxSize={4} index={1} />
+              <RangeSliderThumb borderColor={"gray"} boxSize={4} index={0} />
+              <RangeSliderThumb borderColor={"gray"} boxSize={4} index={1} />
             </RangeSlider>
           </Box>
         </Stack>
