@@ -10,8 +10,7 @@ import { ListingDto } from "@/types/ListingDto";
 import { PriceRange } from "@/types/PriceRange";
 import { Box, Text } from "@chakra-ui/react";
 import { User } from "@supabase/supabase-js";
-import { Suspense, useEffect, useState } from "react";
-import LoadingPage from "../loading";
+import { useEffect, useState } from "react";
 
 export default function ExplorePage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -21,7 +20,11 @@ export default function ExplorePage() {
   );
   const [searchKeywords, setSearchKeywords] = useState<string[]>([]);
   const [categoriesFilter, setCategoriesFilter] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<PriceRange | null>(null);
+  const [mostExpensiveListing, setMostExpensiveListing] = useState<number>(0);
+  const [priceRange, setPriceRange] = useState<PriceRange>({
+    min: 0,
+    max: 0,
+  });
 
   /**Fetches all the verified listings from the database */
   const fetchListings = async () => {
@@ -37,6 +40,15 @@ export default function ExplorePage() {
     } else if (status == HttpStatusCode.FORBIDDEN) {
       console.error("You are not logged in !");
     }
+
+    setMostExpensiveListing(
+      Math.max(...fetchedListings.map((listing) => listing.price))
+    );
+    setPriceRange({
+      ...priceRange,
+      max: Math.max(...fetchedListings.map((listing) => listing.price)),
+    });
+
     setListings(fetchedListings ?? null);
   };
 
@@ -49,11 +61,14 @@ export default function ExplorePage() {
   useEffect(() => {
     if (
       !listings ||
-      (searchKeywords.length == 0 && categoriesFilter.length == 0)
+      (searchKeywords.length == 0 &&
+        categoriesFilter.length == 0 &&
+        !priceRange)
     ) {
       setFilteredListings(null);
       return;
     }
+
     const matchingListings = listings.filter((listing) => {
       const listingTitle = listing.title;
       const keywordsMatch =
@@ -64,20 +79,26 @@ export default function ExplorePage() {
         categoriesFilter.length == 0 ||
         categoriesFilter.includes(listing.category);
 
-      return keywordsMatch && categoryMatch;
+      let priceRangeMatch =
+        !priceRange ||
+        (listing.price >= priceRange.min && listing.price <= priceRange.max);
+
+      return keywordsMatch && categoryMatch && priceRangeMatch;
     });
 
     setFilteredListings(matchingListings);
-  }, [searchKeywords, categoriesFilter]);
+  }, [searchKeywords, categoriesFilter, priceRange]);
 
   return (
     <main className="flex h-screen w-screen flex-col">
       <NavBar setSearchKeywords={setSearchKeywords} />
       <div className="flex w-full overflow-hidden gap-4 px-4">
         <ExploreSideBar
+          isLoading={!!!listings}
           currentPriceRange={priceRange}
           setPriceRange={setPriceRange}
           setCategoriesFilter={setCategoriesFilter}
+          mostExpensiveListing={mostExpensiveListing}
         />
         <Box
           display={"flex"}
@@ -93,9 +114,7 @@ export default function ExplorePage() {
             Explore
           </Text>
           <Categories />
-          <Suspense fallback={<LoadingPage />}>
-            <ListingCardsGrid listings={filteredListings ?? listings} />
-          </Suspense>
+          <ListingCardsGrid listings={filteredListings ?? listings} />
         </Box>
       </div>
     </main>
