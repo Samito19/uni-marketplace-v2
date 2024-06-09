@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction } from "react";
 import { Colors } from "@/types/Colors";
+import { supabaseClient } from "@/lib/supabase";
 
 type Props = {
   listing: ListingDto;
@@ -23,10 +24,39 @@ export default function ListingCard({
   setClickedListing,
   onOpen,
 }: Props) {
+  async function incrementViews(listingId: string) {
+    // Get the current views
+    let { data, error } = await supabaseClient
+      .from("listings")
+      .select("views")
+      .eq("id", listingId)
+      .single();
+
+    if (error || !data) {
+      console.error("Error fetching current views:", error);
+      return;
+    }
+
+    const currentViews = data.views;
+
+    // Increment the views
+    const { data: updatedData, error: updateError } = await supabaseClient
+      .from("listings")
+      .update({ views: currentViews + 1 })
+      .eq("id", listingId);
+
+    if (updateError) {
+      console.error("Error incrementing views:", updateError);
+    } else {
+      console.log("Views incremented successfully:", updatedData);
+    }
+  }
+
   /**This function handles a user's click on a listing card to show the proper modal that contains details about the listing.
    * It calls the onOpen() function which sets the isOpen boolean variable to true, therefore showing the ListingModal component.
    */
-  const handleListingClick = (listing: ListingDto) => {
+  const handleListingClick = async (listing: ListingDto) => {
+    await incrementViews(listing.id!);
     setClickedListing(listing);
     onOpen();
   };
@@ -41,9 +71,17 @@ export default function ListingCard({
       overflow="hidden"
       gap={5}
     >
-      <Image objectFit="cover" src="students-on-grass.jpeg" alt="Chakra UI" />
-      <CardBody paddingLeft={5} gap={1} className="flex flex-col">
-        <Heading className="group-hover:underline" size="md">
+      <div className="flex h-[14rem] w-full border-b-[1px] border-black/20 ">
+        <Image
+          objectFit="cover"
+          src={listing.images[0]}
+          alt={listing.title}
+          className="overflow-hidden w-full"
+        />
+      </div>
+
+      <CardBody paddingX={5} gap={1} className="flex flex-col">
+        <Heading noOfLines={1} className="group-hover:underline" size="md">
           {listing.title}
         </Heading>
         <Text width={"75%"} noOfLines={1}>

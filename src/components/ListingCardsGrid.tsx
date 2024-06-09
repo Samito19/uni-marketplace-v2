@@ -52,9 +52,7 @@ export const ListingCardsGrid = ({ listings }: Props) => {
         })}
       </SimpleGrid>
     );
-  }
-
-  if (listings.length == 0) {
+  } else if (listings.length == 0) {
     return (
       <Box
         height={"100%"}
@@ -67,33 +65,32 @@ export const ListingCardsGrid = ({ listings }: Props) => {
         </Text>
       </Box>
     );
-  }
+  } else
+    return (
+      <>
+        {clickedListing ? (
+          <ListingModal
+            isOpen={isOpen}
+            onClose={onClose}
+            listing={clickedListing}
+          />
+        ) : null}
 
-  return (
-    <>
-      {clickedListing ? (
-        <ListingModal
-          isOpen={isOpen}
-          onClose={onClose}
-          listing={clickedListing}
-        />
-      ) : null}
-
-      <SimpleGrid
-        spacing={4}
-        templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
-      >
-        {listings.map((listing, index) => {
-          return (
-            <ListingCard
-              listing={listing}
-              setClickedListing={setClickedListing}
-              onOpen={onOpen}
-              key={index}
-            />
-          );
-        })}
-      </SimpleGrid>
-    </>
-  );
+        <SimpleGrid
+          spacing={4}
+          templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
+        >
+          {listings.map((listing, index) => {
+            return (
+              <ListingCard
+                listing={listing}
+                setClickedListing={setClickedListing}
+                onOpen={onOpen}
+                key={index}
+              />
+            );
+          })}
+        </SimpleGrid>
+      </>
+    );
 };

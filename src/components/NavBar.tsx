@@ -31,7 +31,7 @@ export default function NavBar({ setSearchKeywords }: Props) {
     console.log("Successfully signed out !");
   };
   return (
-    <nav className="w-full min-h-[4.5rem] shadow-sm flex items-center p-4 gap-4 justify-between sm:justify-normal">
+    <nav className="w-full min-h-[4.5rem] border-b-[1px] shadow-sm flex items-center p-4 gap-4 justify-between sm:justify-normal">
       <Image
         alt="Montclair State University Red Hawk"
         src="hawk-logo.svg"
@@ -59,7 +59,6 @@ export default function NavBar({ setSearchKeywords }: Props) {
         bgColor={Colors.primaryRed}
         color={"white"}
       />
-      <button onClick={signOut}>Sign Out</button>
     </nav>
   );
 }

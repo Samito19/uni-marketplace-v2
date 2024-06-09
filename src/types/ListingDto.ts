@@ -1,11 +1,12 @@
 export type ListingDto = {
-  id: number;
-  title: string;
   author_id: string;
-  created_at: string;
-  description: string;
-  views: number;
-  price: number;
   category: string;
   condition: string;
+  created_at?: string;
+  description: string;
+  id: string | undefined;
+  images: string[];
+  price: number;
+  title: string;
+  views?: number;
 };

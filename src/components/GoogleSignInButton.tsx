@@ -5,9 +5,9 @@ export const GoogleSignInButton = () => {
   const signInWithGoogle = async () => {
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: `http://localhost:3000/explore`,
-      },
+      // options: {
+      //   redirectTo: `http://localhost:3000/explore`,
+      // },
     });
   };
 

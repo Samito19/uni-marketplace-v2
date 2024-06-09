@@ -16,7 +16,8 @@ export type Database = {
           condition: string
           created_at: string
           description: string
-          id: number
+          id: string
+          images: string[]
           price: number
           title: string
           verified: boolean
@@ -28,7 +29,8 @@ export type Database = {
           condition?: string
           created_at?: string
           description: string
-          id?: number
+          id?: string
+          images?: string[]
           price?: number
           title: string
           verified?: boolean
@@ -40,7 +42,8 @@ export type Database = {
           condition?: string
           created_at?: string
           description?: string
-          id?: number
+          id?: string
+          images?: string[]
           price?: number
           title?: string
           verified?: boolean

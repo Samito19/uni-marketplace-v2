@@ -9,7 +9,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { lora } from "@/types/Fonts";
 import { PriceRange } from "@/types/PriceRange";
 import { Colors } from "@/types/Colors";
@@ -18,24 +18,43 @@ import { CATEGORIES } from "./Categories";
 //TODO: Figure out why category checkboxes component cannot be isolated
 
 type Props = {
-  setCategoriesFilter: Dispatch<SetStateAction<string[]>>;
+  setCategoriesFilter: Dispatch<SetStateAction<string>>;
+  categoriesFilter: string;
+  setConditionFilter: Dispatch<SetStateAction<string>>;
+  conditionFilter: string;
   setPriceRange: Dispatch<SetStateAction<PriceRange>>;
   currentPriceRange: PriceRange;
   mostExpensiveListing: number;
   isLoading: boolean;
 };
 
+export const CONDITION = ["Brand New", "Like New", "Good", "Worn"];
+
 export default function ExploreSideBar({
   setCategoriesFilter,
+  categoriesFilter,
+  setConditionFilter,
+  conditionFilter,
   setPriceRange,
   currentPriceRange,
   mostExpensiveListing,
   isLoading,
 }: Props) {
-  const handleCategoryCheckBox = (categories: string[]) => {
-    setCategoriesFilter(categories);
+  const handleCategoryCheckBox = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setCategoriesFilter(e.target.value);
+    } else {
+      setCategoriesFilter("");
+    }
   };
 
+  const handleConditionCheckBox = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setConditionFilter(e.target.value);
+    } else {
+      setConditionFilter("");
+    }
+  };
   const PriceRangeSlider = () => {
     return (
       <Box display="flex" flexDirection={"column"} gap={2} width={"80%"}>
@@ -86,7 +105,7 @@ export default function ExploreSideBar({
   };
 
   return (
-    <section className="hidden sm:flex sm:flex-col w-[20rem] h-fit border-[1px] p-6 rounded-[10px] gap-5 mt-6">
+    <section className="hidden sm:flex sm:flex-col w-[16rem] h-full px-3 py-5 border-r-[1px] gap-5">
       <Text className={lora.className} fontSize={24}>
         Filters
       </Text>
@@ -94,17 +113,41 @@ export default function ExploreSideBar({
         <Text className={lora.className} fontSize={16}>
           Category
         </Text>
-        <CheckboxGroup onChange={handleCategoryCheckBox} colorScheme="red">
-          <Stack spacing={1} direction={"column"}>
-            {CATEGORIES.map((category, index) => {
-              return (
-                <Checkbox key={index} value={category.name.toLowerCase()}>
-                  {category.name}
-                </Checkbox>
-              );
-            })}
-          </Stack>
-        </CheckboxGroup>
+        <Stack spacing={1} direction={"column"}>
+          {CATEGORIES.map((category, index) => {
+            return (
+              <Checkbox
+                onChange={handleCategoryCheckBox}
+                key={index}
+                value={category.name.toLowerCase()}
+                colorScheme={"red"}
+                isChecked={categoriesFilter === category.name.toLowerCase()}
+              >
+                {category.name}
+              </Checkbox>
+            );
+          })}
+        </Stack>
+      </Box>
+      <Box display="flex" flexDirection={"column"} gap={2}>
+        <Text className={lora.className} fontSize={16}>
+          Condition
+        </Text>
+        <Stack spacing={1} direction={"column"}>
+          {CONDITION.map((condition, index) => {
+            return (
+              <Checkbox
+                onChange={handleConditionCheckBox}
+                key={index}
+                value={condition}
+                colorScheme={"red"}
+                isChecked={conditionFilter === condition}
+              >
+                {condition}
+              </Checkbox>
+            );
+          })}
+        </Stack>
       </Box>
       {isLoading ? null : <PriceRangeSlider />}
       <LocationCheckBoxes />

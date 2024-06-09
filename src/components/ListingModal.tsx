@@ -28,8 +28,6 @@ enum ExpandDescription {
   True = 100,
 }
 
-const LISTING_DETAILS = ["Condition", "Price", "Category"];
-
 /**Modal component to render a listing's details */
 export default function ListingModal({ listing, isOpen, onClose }: Props) {
   const [expandDescription, setExpandDescription] = useState<ExpandDescription>(
@@ -45,7 +43,7 @@ export default function ListingModal({ listing, isOpen, onClose }: Props) {
   };
   return (
     <Modal
-      scrollBehavior="inside"
+      // scrollBehavior="inside"
       size={"xl"}
       isOpen={isOpen}
       onClose={onClose}
@@ -55,9 +53,7 @@ export default function ListingModal({ listing, isOpen, onClose }: Props) {
         <ModalHeader>{listing.title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody display={"flex"} flexDirection={"column"} gap={3}>
-          <div className="flex rounded-[10px] bg-red-200">
-            <ImageCarousel />
-          </div>
+          <ImageCarousel images={listing.images} />
           <Heading as="h4" size="md">
             Details
           </Heading>

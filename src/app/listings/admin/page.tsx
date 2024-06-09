@@ -1,6 +1,7 @@
 "use client";
+
+import { navigate } from "@/app/actions";
 import Categories from "@/components/Categories";
-import ExploreSideBar from "@/components/ExploreSideBar";
 import { ListingCardsGrid } from "@/components/ListingCardsGrid";
 import NavBar from "@/components/NavBar";
 import { supabaseClient } from "@/lib/supabase";
@@ -9,23 +10,17 @@ import { lora } from "@/types/Fonts";
 import HttpStatusCode from "@/types/HtttpStatusCodes";
 import { ListingDto } from "@/types/ListingDto";
 import { PriceRange } from "@/types/PriceRange";
-import { capitalizeFirstLetter } from "@/utils/functions";
 import { AddIcon } from "@chakra-ui/icons";
 import { Box, Button, Text } from "@chakra-ui/react";
-import { User } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
-import { navigate } from "../actions";
+import { useState, useEffect } from "react";
 
-export default function ExplorePage() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+export default function AdminDashboard() {
   const [listings, setListings] = useState<ListingDto[] | null>(null);
   const [filteredListings, setFilteredListings] = useState<ListingDto[] | null>(
     null
   );
   const [searchKeywords, setSearchKeywords] = useState<string[]>([]);
   const [categoriesFilter, setCategoriesFilter] = useState<string>("");
-  const [conditionFilter, setConditionFilter] = useState<string>("");
-
   const [mostExpensiveListing, setMostExpensiveListing] = useState<number>(0);
   const [priceRange, setPriceRange] = useState<PriceRange>({
     min: 0,
@@ -48,14 +43,6 @@ export default function ExplorePage() {
     } else if (status == HttpStatusCode.FORBIDDEN) {
       console.error("You are not logged in !");
     }
-
-    setMostExpensiveListing(
-      Math.max(...fetchedListings.map((listing) => listing.price))
-    );
-    setPriceRange({
-      ...priceRange,
-      max: Math.max(...fetchedListings.map((listing) => listing.price)),
-    });
 
     const listingsWithImages = await Promise.all(
       fetchedListings.map(async (listing) => {
@@ -81,7 +68,7 @@ export default function ExplorePage() {
   }, []);
 
   /*This piece of code will take care of filtering all the listings down to the ones that contain
-   at least one of the keywords typed in the search bar */
+     at least one of the keywords typed in the search bar */
   useEffect(() => {
     if (
       !listings ||
@@ -95,67 +82,46 @@ export default function ExplorePage() {
 
     const matchingListings = listings.filter((listing) => {
       const listingTitle = listing.title;
-      const listingDescription = listing.description;
       const keywordsMatch =
-        searchKeywords.some(
-          (keyword) =>
-            listingTitle.toLowerCase().includes(keyword.toLowerCase()) ||
-            listingDescription.toLowerCase().includes(keyword.toLowerCase())
-        ) || searchKeywords.length == 0;
+        searchKeywords.some((keyword) => listingTitle.includes(keyword)) ||
+        searchKeywords.length == 0;
 
       let categoryMatch =
         categoriesFilter.length == 0 || categoriesFilter == listing.category;
-
-      let conditionMatch =
-        conditionFilter.length == 0 || conditionFilter == listing.condition;
 
       let priceRangeMatch =
         !priceRange ||
         (listing.price >= priceRange.min && listing.price <= priceRange.max);
 
-      return (
-        keywordsMatch && categoryMatch && priceRangeMatch && conditionMatch
-      );
+      return keywordsMatch && categoryMatch && priceRangeMatch;
     });
 
     setFilteredListings(matchingListings);
-  }, [searchKeywords, categoriesFilter, priceRange, conditionFilter]);
+  }, [searchKeywords, categoriesFilter, priceRange]);
 
   return (
     <main className="flex h-screen w-screen flex-col overflow-hidden">
       <NavBar setSearchKeywords={setSearchKeywords} />
-      <div className="flex h-full w-full overflow-hidden px-4">
-        <ExploreSideBar
-          conditionFilter={conditionFilter}
-          setConditionFilter={setConditionFilter}
-          categoriesFilter={categoriesFilter}
-          isLoading={!!!listings}
-          currentPriceRange={priceRange}
-          setPriceRange={setPriceRange}
-          setCategoriesFilter={setCategoriesFilter}
-          mostExpensiveListing={mostExpensiveListing}
-        />
+      <div className="flex w-full overflow-hidden gap-4 px-4">
         <Box
           display={"flex"}
           paddingY={2}
-          paddingX={8}
-          paddingBottom={30}
+          paddingX={4}
+          paddingBottom={10}
           flexDirection={"column"}
           overflow={"scroll"}
           overflowX={"hidden"}
           width={"100%"}
-          className="gap-2 sm:gap-6 bg-slate-50/20"
+          className="gap-2 sm:gap-6"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 sm:mb-0">
             <Text fontSize={50} className={lora.className}>
-              {categoriesFilter
-                ? capitalizeFirstLetter(categoriesFilter)
-                : "Explore"}
+              Admin Dashboard
             </Text>
             <Button
               className="bg-white text-white rounded-[4px] p-2 font-semibold w-[10rem] sm:w-fit"
               color={"red.500"}
-              _hover={{ bg: Colors.primaryRed, textColor: "white" }}
+              _hover={{ bg: Colors.primaryRed + "10" }}
               leftIcon={<AddIcon />}
               variant="outline"
               borderColor={"red.500"}

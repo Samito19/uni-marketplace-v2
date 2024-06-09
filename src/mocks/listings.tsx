@@ -2,7 +2,7 @@ import { ListingDto } from "../types/ListingDto";
 
 export const mockListingsArray: ListingDto[] = [
   {
-    id: 0,
+    id: "",
     author_id: "Fake Author",
     title: "Fake Title",
     description: "Fake Description",
@@ -11,6 +11,7 @@ export const mockListingsArray: ListingDto[] = [
     price: 99,
     condition: "Excellent",
     views: 10,
+    images: [],
   },
   // {
   //   id: 1,
