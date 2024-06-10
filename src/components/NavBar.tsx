@@ -8,15 +8,18 @@ import {
 } from "@chakra-ui/react";
 import { lora } from "@/types/Fonts";
 import { SearchIcon } from "@chakra-ui/icons";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Colors } from "@/types/Colors";
 import { signOutCurrentUser } from "@/lib/supabase";
+import { redirectUnauthenticatedUser } from "@/utils/functions";
+import { User } from "@supabase/supabase-js";
 
 type Props = {
   setSearchKeywords: Dispatch<SetStateAction<string[]>>;
 };
 
 export default function NavBar({ setSearchKeywords }: Props) {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const handleInputSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchSentence = event.target.value;
     const keywords = searchSentence.trimEnd().split(" ");
@@ -30,6 +33,11 @@ export default function NavBar({ setSearchKeywords }: Props) {
     }
     console.log("Successfully signed out !");
   };
+
+  useEffect(() => {
+    redirectUnauthenticatedUser(setCurrentUser);
+  }, []);
+
   return (
     <nav className="w-full min-h-[4.5rem] border-b-[1px] shadow-sm flex items-center p-4 gap-4 justify-between sm:justify-normal">
       <Image
@@ -53,9 +61,10 @@ export default function NavBar({ setSearchKeywords }: Props) {
         />
       </InputGroup>
       <Avatar
+        cursor={"pointer"}
         size={"sm"}
-        name="Sami Amsaf"
-        src="https://bit.ly/broken-link"
+        name={currentUser?.user_metadata["full_name"]}
+        src={currentUser?.user_metadata["avatar_url"]}
         bgColor={Colors.primaryRed}
         color={"white"}
       />

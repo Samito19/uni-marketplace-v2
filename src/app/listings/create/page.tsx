@@ -26,6 +26,7 @@ import { supabaseClient } from "@/lib/supabase";
 import { Colors } from "@/types/Colors";
 import { navigate } from "@/app/actions";
 import { v4 as uuidv4 } from "uuid";
+import { redirectUnauthenticatedUser } from "@/utils/functions";
 
 export const CONDITION_OPTIONS = ["Brand New", "Like New", "Good", "Worn"];
 
@@ -116,9 +117,9 @@ export default function CreateListingPage() {
     navigate("/listings/create/success");
   };
 
-  // useEffect(() => {
-  //   redirectUnauthenticatedUser();
-  // }, []);
+  useEffect(() => {
+    redirectUnauthenticatedUser();
+  }, []);
 
   useEffect(() => {
     setTitleError(false);

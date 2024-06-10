@@ -12,12 +12,10 @@ import { PriceRange } from "@/types/PriceRange";
 import { capitalizeFirstLetter } from "@/utils/functions";
 import { AddIcon } from "@chakra-ui/icons";
 import { Box, Button, Text } from "@chakra-ui/react";
-import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { navigate } from "../actions";
 
 export default function ExplorePage() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [listings, setListings] = useState<ListingDto[] | null>(null);
   const [filteredListings, setFilteredListings] = useState<ListingDto[] | null>(
     null
@@ -40,7 +38,11 @@ export default function ExplorePage() {
       data: fetchedListings,
       status,
       error,
-    } = await supabaseClient.from("listings").select().returns<ListingDto[]>();
+    } = await supabaseClient
+      .from("listings")
+      .select()
+      .order("created_at", { ascending: false })
+      .returns<ListingDto[]>();
 
     if (error) {
       console.error(error);
