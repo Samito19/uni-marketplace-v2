@@ -3,6 +3,7 @@ import "@testing-library/jest-dom";
 import ExplorePage from "@/app/explore/page";
 import { ChakraProvider } from "@chakra-ui/react";
 
+
 test("Explore page loads correctly", async () => {
   // ARRANGE
   render(

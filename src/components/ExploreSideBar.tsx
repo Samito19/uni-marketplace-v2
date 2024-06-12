@@ -1,19 +1,30 @@
 import {
   Box,
+  Button,
   Checkbox,
   CheckboxGroup,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerOverlay,
   RangeSlider,
   RangeSliderFilledTrack,
   RangeSliderThumb,
   RangeSliderTrack,
   Stack,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { lora } from "@/types/Fonts";
 import { PriceRange } from "@/types/PriceRange";
 import { Colors } from "@/types/Colors";
 import { CATEGORIES } from "./Categories";
+import { TfiViewListAlt } from "react-icons/tfi";
+        
+
+
 
 //TODO: Figure out why category checkboxes component cannot be isolated
 
@@ -40,6 +51,9 @@ export default function ExploreSideBar({
   mostExpensiveListing,
   isLoading,
 }: Props) {
+
+  const { isOpen, onOpen, onClose } = useDisclosure(); // manage drawer state
+
   const handleCategoryCheckBox = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       setCategoriesFilter(e.target.value);
@@ -104,8 +118,8 @@ export default function ExploreSideBar({
     );
   };
 
-  return (
-    <section className="hidden sm:flex sm:flex-col w-[16rem] h-full px-3 py-5 border-r-[1px] gap-5">
+  const FilterContent = () => (
+    <div className="flex flex-col gap-5">
       <Text className={lora.className} fontSize={24}>
         Filters
       </Text>
@@ -114,19 +128,17 @@ export default function ExploreSideBar({
           Category
         </Text>
         <Stack spacing={1} direction={"column"}>
-          {CATEGORIES.map((category, index) => {
-            return (
-              <Checkbox
-                onChange={handleCategoryCheckBox}
-                key={index}
-                value={category.name.toLowerCase()}
-                colorScheme={"red"}
-                isChecked={categoriesFilter === category.name.toLowerCase()}
-              >
-                {category.name}
-              </Checkbox>
-            );
-          })}
+          {CATEGORIES.map((category, index) => (
+            <Checkbox
+              onChange={handleCategoryCheckBox}
+              key={index}
+              value={category.name.toLowerCase()}
+              colorScheme={"red"}
+              isChecked={categoriesFilter === category.name.toLowerCase()}
+            >
+              {category.name}
+            </Checkbox>
+          ))}
         </Stack>
       </Box>
       <Box display="flex" flexDirection={"column"} gap={2}>
@@ -134,23 +146,65 @@ export default function ExploreSideBar({
           Condition
         </Text>
         <Stack spacing={1} direction={"column"}>
-          {CONDITION.map((condition, index) => {
-            return (
-              <Checkbox
-                onChange={handleConditionCheckBox}
-                key={index}
-                value={condition}
-                colorScheme={"red"}
-                isChecked={conditionFilter === condition}
-              >
-                {condition}
-              </Checkbox>
-            );
-          })}
+          {CONDITION.map((condition, index) => (
+            <Checkbox
+              onChange={handleConditionCheckBox}
+              key={index}
+              value={condition}
+              colorScheme={"red"}
+              isChecked={conditionFilter === condition}
+            >
+              {condition}
+            </Checkbox>
+          ))}
         </Stack>
       </Box>
       {isLoading ? null : <PriceRangeSlider />}
       <LocationCheckBoxes />
-    </section>
+    </div>
   );
+  
+  return (
+    <>
+      {/* For larger screens */}
+      <Box
+        className="hidden sm:flex sm:flex-col"
+        w="16rem"
+        h="full"
+        px={5}
+        py={5}
+        borderRight="1px"
+        gap={5}
+      >
+        <FilterContent />
+      </Box>
+  
+      {/* For smaller screens */}
+      <Button
+        className="bg-white text-white rounded-[4px] p-2 font-semibold w-[3rem]"
+        color={"red.500"}
+        _hover={{ bg: Colors.primaryRed, textColor: "white" }}
+        variant="outline"
+        borderColor={"red.500"}
+        display={{ base: "flex", sm: "none" }}
+        onClick={onOpen}
+        position="fixed"
+        top={4}
+        left={4}
+        zIndex={10}
+      >
+        <TfiViewListAlt />
+      </Button>
+  
+      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent flex={"column"}>
+          <DrawerCloseButton />
+          <DrawerBody>
+            <FilterContent />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+    </>
+  )
 }
