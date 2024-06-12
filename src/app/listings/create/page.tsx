@@ -26,6 +26,8 @@ import { supabaseClient } from "@/lib/supabase";
 import { Colors } from "@/types/Colors";
 import { navigate } from "@/app/actions";
 import { v4 as uuidv4 } from "uuid";
+import { redirectUnauthenticatedUser } from "@/utils/functions";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
 export const CONDITION_OPTIONS = ["Brand New", "Like New", "Good", "Worn"];
 
@@ -116,9 +118,9 @@ export default function CreateListingPage() {
     navigate("/listings/create/success");
   };
 
-  // useEffect(() => {
-  //   redirectUnauthenticatedUser();
-  // }, []);
+  useEffect(() => {
+    redirectUnauthenticatedUser();
+  }, []);
 
   useEffect(() => {
     setTitleError(false);
@@ -131,6 +133,10 @@ export default function CreateListingPage() {
 
   return (
     <main className="min-h-screen flex flex-col items-center pb-8 px-5 mt-[1.5rem] sm:mt-[2rem]">
+      <Image width={40} height={40} alt="" src={"/square-double-alt-arrow-left.svg"} className="self-start"/>
+  {/* <Button onClick={() => {navigate("/explore")}} leftIcon={<ArrowBackIcon />} colorScheme='red'  variant='ghost' alignSelf={"start"} className="hidden md:block">
+    Back to Explore page
+  </Button> */}
       <form
         action={() => {
           handleListingSubmission();
