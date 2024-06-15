@@ -168,12 +168,11 @@ export default function ExploreSideBar({
     <>
       {/* For larger screens */}
       <Box
-        className="hidden sm:flex sm:flex-col"
+        className="hidden sm:flex sm:flex-col border-r-[1px]"
         w="16rem"
         h="full"
         px={5}
         py={5}
-        borderRight="1px"
         gap={5}
       >
         <FilterContent />

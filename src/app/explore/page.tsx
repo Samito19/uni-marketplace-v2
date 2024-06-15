@@ -12,12 +12,10 @@ import { PriceRange } from "@/types/PriceRange";
 import { capitalizeFirstLetter } from "@/utils/functions";
 import { AddIcon } from "@chakra-ui/icons";
 import { Box, Button, Text } from "@chakra-ui/react";
-import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { navigate } from "../actions";
 
 export default function ExplorePage() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [listings, setListings] = useState<ListingDto[] | null>(null);
   const [filteredListings, setFilteredListings] = useState<ListingDto[] | null>(
     null
@@ -31,8 +29,6 @@ export default function ExplorePage() {
     min: 0,
     max: 0,
   });
-
-  const [imagesLoaded, setImagedLoaded] = useState<boolean>(false);
 
   /**Fetches all the verified listings from the database */
   const fetchListings = async () => {
