@@ -27,7 +27,8 @@ import { Colors } from "@/types/Colors";
 import { navigate } from "@/app/actions";
 import { v4 as uuidv4 } from "uuid";
 import { redirectUnauthenticatedUser } from "@/utils/functions";
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { IoClose } from "react-icons/io5";
 
 export const CONDITION_OPTIONS = ["Brand New", "Like New", "Good", "Worn"];
 
@@ -131,12 +132,8 @@ export default function CreateListingPage() {
     setImagesError(false);
   }, [imageFiles]);
 
-  return (
-    <main className="min-h-screen flex flex-col items-center pb-8 px-5 mt-[1.5rem] sm:mt-[2rem]">
-      <Image width={40} height={40} alt="" src={"/square-double-alt-arrow-left.svg"} className="self-start"/>
-  {/* <Button onClick={() => {navigate("/explore")}} leftIcon={<ArrowBackIcon />} colorScheme='red'  variant='ghost' alignSelf={"start"} className="hidden md:block">
-    Back to Explore page
-  </Button> */}
+  const Content = () => (
+    <main className="min-h-screen flex flex-col items-center pt-[4.5rem] pb-8 px-5 mt-[1.5rem] sm:mt-[2rem]">
       <form
         action={() => {
           handleListingSubmission();
@@ -295,5 +292,56 @@ export default function CreateListingPage() {
         </Button>
       </form>
     </main>
+  );
+
+
+  return (
+    <>
+      <nav className="w-full min-h-[4.5rem] border-b-[1px] shadow-sm flex items-center p-4 gap-4 justify-between fixed top-0 z-10 bg-white">
+        
+        <div className="hidden md:flex items-center">
+          <Button 
+            onClick={() => { navigate("/explore") }} 
+            leftIcon={<ArrowBackIcon />} 
+            color="red.500" 
+            variant="ghost"
+          >
+            Back to Explore page
+          </Button>
+        </div>
+
+        <div className="block md:hidden">
+          <Button 
+            onClick={() => { navigate("/explore") }} 
+            variant="ghost"
+            fontSize={30}
+          >
+            <IoClose />
+          </Button>
+        </div>
+
+        <div className="hidden md:flex items-center">
+          <Button 
+            onClick={() => { handleListingSubmission() }} 
+            rightIcon={<ArrowForwardIcon />} 
+            color="red.500" 
+            variant="ghost"
+          >
+            Submit listing
+          </Button>
+        </div>
+
+        <div className="block md:hidden">
+          <Button 
+            onClick={() => { handleListingSubmission() }} 
+            variant="ghost"
+            fontSize={20}
+          >
+            <span style={{ textDecoration: 'underline' }}>Submit</span>
+          </Button>
+        </div>
+      </nav>  
+      <Content />
+    </>
   );
 }
