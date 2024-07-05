@@ -3,9 +3,20 @@ import { navigate } from "@/app/actions";
 import { Colors } from "@/types/Colors";
 import { lora } from "@/types/Fonts";
 import { Button, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 
 export default function ListingCreatedSuccess() {
+  const [windowDimensions, setWindowDimensions] = useState<{
+    height: number;
+    width: number;
+  }>({ height: 0, width: 0 });
+  useEffect(() => {
+    setWindowDimensions({
+      height: window.innerHeight,
+      width: window.innerWidth,
+    });
+  }, []);
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-4">
       <div className="flex flex-col gap-1 items-center justify-center z-10 bg-white text-center">
@@ -36,8 +47,8 @@ export default function ListingCreatedSuccess() {
         Take me to the Explore page
       </Button>
       <Confetti
-        width={window.innerWidth}
-        height={window.innerHeight}
+        width={windowDimensions.width}
+        height={windowDimensions.height}
       ></Confetti>
     </div>
   );

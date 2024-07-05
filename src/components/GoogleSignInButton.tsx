@@ -1,4 +1,4 @@
-import { supabaseClient } from "@/lib/supabase";
+import { supabaseClient } from "@/lib/supabase/supabase";
 import Image from "next/image";
 
 export const GoogleSignInButton = () => {

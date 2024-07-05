@@ -3,11 +3,10 @@ import Categories from "@/components/Categories";
 import ExploreSideBar from "@/components/ExploreSideBar";
 import { ListingCardsGrid } from "@/components/ListingCardsGrid";
 import NavBar from "@/components/NavBar";
-import { supabaseClient } from "@/lib/supabase";
+import { fetchListings } from "@/lib/supabase/api/fetchListings";
 import { Colors } from "@/types/Colors";
 import { lora } from "@/types/Fonts";
-import HttpStatusCode from "@/types/HtttpStatusCodes";
-import { ListingDto } from "@/types/ListingDto";
+import { ListingDto, filterListings } from "@/types/ListingDto";
 import { PriceRange } from "@/types/PriceRange";
 import { capitalizeFirstLetter } from "@/utils/functions";
 import { AddIcon } from "@chakra-ui/icons";
@@ -30,91 +29,35 @@ export default function ExplorePage() {
     max: 0,
   });
 
-  /**Fetches all the verified listings from the database */
-  const fetchListings = async () => {
-    const {
-      data: fetchedListings,
-      status,
-      error,
-    } = await supabaseClient.from("listings").select().returns<ListingDto[]>();
-
-    if (error) {
-      console.error(error);
-      return;
-    } else if (status == HttpStatusCode.FORBIDDEN) {
-      console.error("You are not logged in !");
-    }
-
-    setMostExpensiveListing(
-      Math.max(...fetchedListings.map((listing) => listing.price))
+  const loadExplorePage = async () => {
+    const response = await fetchListings(
+      setMostExpensiveListing,
+      setPriceRange,
+      setListings,
+      priceRange
     );
-    setPriceRange({
-      ...priceRange,
-      max: Math.max(...fetchedListings.map((listing) => listing.price)),
-    });
-
-    const listingsWithImages = await Promise.all(
-      fetchedListings.map(async (listing) => {
-        let imageUrls: string[] = [];
-        for (const imagePath of listing.images) {
-          const { data: imageBlob, error } = await supabaseClient.storage
-            .from("listings-images")
-            .download(imagePath);
-
-          if (imageBlob && !error) {
-            imageUrls.push(URL.createObjectURL(imageBlob));
-          }
-        }
-        return { ...listing, images: imageUrls };
-      })
-    );
-
-    setListings(listingsWithImages ?? null);
+    setMostExpensiveListing(response.mostExpensiveListingPrice);
+    setPriceRange(response.newPriceRange);
+    setListings(response.listings);
   };
 
   useEffect(() => {
-    fetchListings();
+    loadExplorePage();
   }, []);
 
   /*This piece of code will take care of filtering all the listings down to the ones that contain
    at least one of the keywords typed in the search bar */
   useEffect(() => {
-    if (
-      !listings ||
-      (searchKeywords.length == 0 &&
-        categoriesFilter.length == 0 &&
-        !priceRange)
-    ) {
-      setFilteredListings(null);
-      return;
-    }
-
-    const matchingListings = listings.filter((listing) => {
-      const listingTitle = listing.title;
-      const listingDescription = listing.description;
-      const keywordsMatch =
-        searchKeywords.some(
-          (keyword) =>
-            listingTitle.toLowerCase().includes(keyword.toLowerCase()) ||
-            listingDescription.toLowerCase().includes(keyword.toLowerCase())
-        ) || searchKeywords.length == 0;
-
-      let categoryMatch =
-        categoriesFilter.length == 0 || categoriesFilter == listing.category;
-
-      let conditionMatch =
-        conditionFilter.length == 0 || conditionFilter == listing.condition;
-
-      let priceRangeMatch =
-        !priceRange ||
-        (listing.price >= priceRange.min && listing.price <= priceRange.max);
-
-      return (
-        keywordsMatch && categoryMatch && priceRangeMatch && conditionMatch
-      );
-    });
-
-    setFilteredListings(matchingListings);
+    if (!listings) return;
+    setFilteredListings(
+      filterListings(
+        listings,
+        searchKeywords,
+        categoriesFilter,
+        priceRange,
+        conditionFilter
+      )
+    );
   }, [searchKeywords, categoriesFilter, priceRange, conditionFilter]);
 
   return (

@@ -1,5 +1,5 @@
 import { navigate } from "@/app/actions";
-import { supabaseClient } from "@/lib/supabase";
+import { supabaseClient } from "@/lib/supabase/supabase";
 
 export function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);

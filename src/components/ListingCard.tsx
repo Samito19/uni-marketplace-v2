@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction } from "react";
 import { Colors } from "@/types/Colors";
-import { supabaseClient } from "@/lib/supabase";
+import { supabaseClient } from "@/lib/supabase/supabase";
 
 type Props = {
   listing: ListingDto;

@@ -1,18 +1,15 @@
 "use client";
 
-import { navigate } from "@/app/actions";
 import Categories from "@/components/Categories";
 import { ListingCardsGrid } from "@/components/ListingCardsGrid";
 import NavBar from "@/components/NavBar";
-import { supabaseClient } from "@/lib/supabase";
-import { Colors } from "@/types/Colors";
+import { supabaseClient } from "@/lib/supabase/supabase";
 import { lora } from "@/types/Fonts";
 import HttpStatusCode from "@/types/HtttpStatusCodes";
 import { ListingDto } from "@/types/ListingDto";
 import { PriceRange } from "@/types/PriceRange";
-import { AddIcon } from "@chakra-ui/icons";
-import { Box, Button, Text } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { Box, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 export default function AdminDashboard() {
   const [listings, setListings] = useState<ListingDto[] | null>(null);
@@ -118,21 +115,7 @@ export default function AdminDashboard() {
             <Text fontSize={50} className={lora.className}>
               Admin Dashboard
             </Text>
-            <Button
-              className="bg-white text-white rounded-[4px] p-2 font-semibold w-[10rem] sm:w-fit"
-              color={"red.500"}
-              _hover={{ bg: Colors.primaryRed + "10" }}
-              leftIcon={<AddIcon />}
-              variant="outline"
-              borderColor={"red.500"}
-              onClick={() => {
-                navigate("/listings/create");
-              }}
-            >
-              Add new listing
-            </Button>
           </div>
-
           <Categories />
           <ListingCardsGrid listings={filteredListings ?? listings} />
         </Box>

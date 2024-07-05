@@ -10,7 +10,7 @@ import { lora } from "@/types/Fonts";
 import { SearchIcon } from "@chakra-ui/icons";
 import { Dispatch, SetStateAction } from "react";
 import { Colors } from "@/types/Colors";
-import { signOutCurrentUser } from "@/lib/supabase";
+import { signOutCurrentUser } from "@/lib/supabase/supabase";
 
 type Props = {
   setSearchKeywords: Dispatch<SetStateAction<string[]>>;
